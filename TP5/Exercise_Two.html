@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ex2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            display: flex;
+            height: 550px;
+            justify-content: center;
+            align-items: center;
+        }
+        .box{
+            display: flex;
+            flex-direction: column;
+            border: 2px solid black;
+            align-items: center;
+            width: 450px;
+            height: 300px;
+            text-align: center;
+        }
+        .box img{
+            margin-top: 20px;
+            margin-bottom: -10px;
+        }
+        .box h3{
+            font-family: Palatino, serif;
+        }
+        .box span{
+            color: rgb(20, 49, 194);
+        }
+        .inputSession{
+            display: flex;
+            justify-content: center;
+        }
+        .inputSession input{
+            margin-right: 10px;
+            padding: 7px;
+            border: 1px solid black;
+            border-radius: 5px;
+        }
+        .inputSession input::placeholder{
+            font-size: 10px;
+        }
+        .inputSession button{
+            font-size: 15px;
+            border-radius: 5px;
+            color: white;
+            background-color: blue;
+            border: none;
+        }
+        #display{
+            border: 1px solid black;
+            width: 200px;
+            height: 120px;
+            margin-top: 10px;
+            border-radius: 5px;
+            background-color: rgb(227, 233, 237);
+        }
+        #display #loading{
+            padding-top: 50px;
+            font-size: 12px;
+        }
+        #display #show h5{
+            margin-top: 8px;
+        }
+        #display #show span{
+           color: rgb(225, 157, 31);
+            text-transform: capitalize;
+        }
+        #display #show p{
+            color: rgb(0, 89, 255);
+            font-family: Palatino, serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+
+        <h3 id="my-text"></h3>
+        <div class="inputSession">
+            <input id="name" type="text" placeholder="Tell me your name">
+            <button onclick="guessing()" >Guess</button>
+        </div>
+        <div id="display">
+            <div id="loading">Loading...</div>
+            <div id="show">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const text = "I know your gender!";
+        let index = 0;
+
+        function displayText() {
+            document.getElementById("my-text").innerHTML = text.slice(0, index);
+            index++;
+            if (index > text.length) {
+                index = 0;
+            }
+        }
+
+        setInterval(displayText, 200);
+        let display = document.getElementById('display');
+        display.hidden = true;
+        function guessing(){
+            let loading = document.getElementById('loading'); 
+            let show = document.getElementById('show');   
+            let name = document.getElementById('name');
+            display.hidden = false;
+            show.hidden = true;
+
+            fetch(`https://api.genderize.io/?name=${name.value}`)
+                .then( async(response)=>{
+                    loading.hidden = true;
+                    show.hidden = false;
+                    let data = await response.json();
+                    show.innerHTML = `
+                        <h5>${data["name"]}</h5>
+                        <h2><span>${data["gender"]}</span></h2>
+                        <p>${data["probability"]*100}%</p>
+                    `
+                })
+
+        }
+
+    </script>
+</body>
+</html>
